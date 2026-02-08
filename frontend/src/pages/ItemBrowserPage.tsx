@@ -8,7 +8,6 @@ import DataTable, { type Column } from '@/components/ui/DataTable';
 import Pagination from '@/components/ui/Pagination';
 import SearchInput from '@/components/ui/SearchInput';
 import Card from '@/components/ui/Card';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
 import ItemQualityText from '@/components/ui/ItemQualityText';
 import { getQualityConfig } from '@/utils/qualityColors';
