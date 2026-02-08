@@ -91,14 +91,26 @@ export async function transaction<T = any>(
  */
 export async function testConnection(): Promise<void> {
   try {
-    const [authTest] = await pools.auth.execute('SELECT 1 as test');
-    const [worldTest] = await pools.world.execute('SELECT COUNT(*) as count FROM item_template');
-    
-    console.log('✅ Auth database: Connected');
-    console.log(`✅ World database: Connected (${(worldTest as any)[0].count} items in database)`);
+    await pools.auth.execute('SELECT 1 as test');
+    console.log('✅ Database: Connected to', process.env.DB_HOST);
   } catch (error) {
     console.error('❌ Database connection failed:', error);
     throw error;
+  }
+
+  // Check optional tables (don't crash if missing)
+  try {
+    const [worldTest] = await pools.world.execute('SELECT COUNT(*) as count FROM item_template');
+    console.log(`✅ World tables: ${(worldTest as any)[0].count} items found`);
+  } catch {
+    console.log('⚠️  World tables not set up yet (item_template not found)');
+  }
+
+  try {
+    const [charTest] = await pools.characters.execute('SELECT COUNT(*) as count FROM characters');
+    console.log(`✅ Characters tables: ${(charTest as any)[0].count} characters found`);
+  } catch {
+    console.log('⚠️  Characters tables not set up yet');
   }
 }
 
