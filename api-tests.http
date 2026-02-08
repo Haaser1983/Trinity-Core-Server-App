@@ -1,0 +1,81 @@
+### TrinityCore Companion App - API Tests
+### Use this in VSCode with REST Client extension
+
+@baseUrl = http://localhost:3001
+@wowheadUrl = {{baseUrl}}/api/wowhead
+@itemsUrl = {{baseUrl}}/api/items
+@playersUrl = {{baseUrl}}/api/players
+@serverUrl = {{baseUrl}}/api/server
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Root Endpoint
+GET {{baseUrl}}/
+
+###
+### ===== WoWHead Integration Tests =====
+###
+
+### Get Thunderfury (Legendary Sword)
+GET {{wowheadUrl}}/items/19019
+
+### Get Sulfuras (Epic Weapon)
+GET {{wowheadUrl}}/items/17182
+
+### Search for Swords
+GET {{wowheadUrl}}/items/search/sword
+
+### Search for Dragonflight Items
+GET {{wowheadUrl}}/items/search/dragonflight
+
+### Get Lich King NPC
+GET {{wowheadUrl}}/npcs/36597
+
+### Get Ragnaros NPC
+GET {{wowheadUrl}}/npcs/11502
+
+### Get Pyroblast Spell
+GET {{wowheadUrl}}/spells/11366
+
+###
+### ===== TrinityCore Database Tests =====
+###
+
+### Get First 10 Items
+GET {{itemsUrl}}?page=1&limit=10
+
+### Get Specific Item (Entry 25)
+GET {{itemsUrl}}/25
+
+### Get All Players (First Page)
+GET {{playersUrl}}?page=1&limit=20
+
+### Get Online Players
+GET {{playersUrl}}/online
+
+### Get Server Status
+GET {{serverUrl}}/status
+
+### Get Server Metrics
+GET {{serverUrl}}/metrics
+
+###
+### ===== Code Generation Tests (Coming Soon) =====
+###
+
+### Generate Item SQL from WoWHead
+# POST {{baseUrl}}/api/generate/item/19019
+# Content-Type: application/json
+#
+# {
+#   "customEntry": 200001
+# }
+
+### Generate Boss Script
+# POST {{baseUrl}}/api/generate/boss/36597
+# Content-Type: application/json
+#
+# {
+#   "bossName": "Lich King"
+# }
