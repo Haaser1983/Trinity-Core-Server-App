@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;">
+    <title>CompApp — TrinityCore Companion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- ═══ Sidebar ═══════════════════════════════════ -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>COMPAPP</h1>
+                <div class="subtitle">Server Companion</div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="dashboard">
+                    <span class="icon">📊</span><span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-page="control">
+                    <span class="icon">⚔️</span><span>Control Panel</span>
+                </li>
+                <li class="nav-item" data-page="items">
+                    <span class="icon">🗡️</span><span>Item Browser</span>
+                </li>
+                <li class="nav-item" data-page="players">
+                    <span class="icon">👥</span><span>Players</span>
+                </li>
+                <li class="nav-item" data-page="wowhead">
+                    <span class="icon">🌐</span><span>WoWHead Import</span>
+                </li>
+                <li class="nav-item" data-page="boss">
+                    <span class="icon">💀</span><span>Boss Scripting</span>
+                </li>
+                <li class="nav-item" data-page="loot">
+                    <span class="icon">💰</span><span>Loot Tables</span>
+                </li>
+                <li class="nav-item" data-page="quests">
+                    <span class="icon">📜</span><span>Quest Builder</span>
+                </li>
+                <li class="nav-item" data-page="npcs">
+                    <span class="icon">👾</span><span>NPC Manager</span>
+                </li>
+                <li class="nav-item" data-page="item-editor">
+                    <span class="icon">🗡️</span><span>Item Editor</span>
+                </li>
+                <li class="nav-item" data-page="player-manager">
+                    <span class="icon">👥</span><span>Player Manager</span>
+                </li>
+                <li class="nav-item" data-page="economy">
+                    <span class="icon">🪙</span><span>Economy</span>
+                </li>
+                <li class="nav-item" data-page="events">
+                    <span class="icon">📅</span><span>Event Scheduler</span>
+                </li>
+                <li class="nav-item" data-page="bots">
+                    <span class="icon">🤖</span><span>Bot System</span>
+                </li>
+                <li class="nav-item" data-page="extractor">
+                    <span class="icon">📦</span><span>DB2 / Extractor</span>
+                </li>
+                <li class="nav-item" data-page="settings">
+                    <span class="icon">⚙️</span><span>Settings</span>
+                </li>
+            </ul>
+            <div class="server-status">
+                <div id="db-status" class="status offline">
+                    <span class="dot"></span>
+                    <span class="text">Database</span>
+                </div>
+                <div id="db-status-detail" class="count">Checking...</div>
+                <div id="soap-status" class="status offline" style="margin-top: 8px;">
+                    <span class="dot"></span>
+                    <span class="text">Worldserver</span>
+                </div>
+                <div id="soap-status-detail" class="count">Not configured</div>
+            </div>
+        </nav>
+
+        <!-- ═══ Main Content ══════════════════════════════ -->
+        <main class="main-content">
+
+            <!-- ─── Dashboard ─────────────────────────── -->
+            <div id="page-dashboard" class="page active">
+                <header class="page-header">
+                    <div>
+                        <h2>Dashboard</h2>
+                        <div class="page-desc">Server overview and quick actions</div>
+                    </div>
+                    <button id="refresh-btn" class="btn btn-primary">🔄 Refresh</button>
+                </header>
+
+                <div class="stats-grid" id="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value" id="stat-online">—</div>
+                        <div class="stat-label">Players Online</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-value" id="stat-chars">—</div>
+                        <div class="stat-label">Total Characters</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🗡️</div>
+                        <div class="stat-value" id="stat-items">—</div>
+                        <div class="stat-label">Item Templates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👾</div>
+                        <div class="stat-value" id="stat-creatures">—</div>
+                        <div class="stat-label">Creature Templates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📜</div>
+                        <div class="stat-value" id="stat-quests">—</div>
+                        <div class="stat-label">Quest Templates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔑</div>
+                        <div class="stat-value" id="stat-accounts">—</div>
+                        <div class="stat-label">Accounts</div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <button class="action-btn" data-action="control">
+                            <span class="icon">⚔️</span><span>Control Panel</span>
+                        </button>
+                        <button class="action-btn" data-action="browse-items">
+                            <span class="icon">🔍</span><span>Browse Items</span>
+                        </button>
+                        <button class="action-btn" data-action="view-players">
+                            <span class="icon">👥</span><span>View Players</span>
+                        </button>
+                        <button class="action-btn" data-action="import-item">
+                            <span class="icon">📥</span><span>Import from WoWHead</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Control Panel (NEW) ───────────────── -->
+            <div id="page-control" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Server Control Panel</h2>
+                        <div class="page-desc">Manage your realm in real-time</div>
+                    </div>
+                </header>
+
+                <!-- Broadcast + XP Rate -->
+                <div class="control-grid">
+                    <!-- Broadcast Messages -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span class="title-icon">📢</span>
+                            <span class="title-text">Broadcast Message</span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="broadcast-types">
+                                <button class="btn btn-sm btn-active" data-btype="announce">📣 Announce</button>
+                                <button class="btn btn-sm btn-secondary" data-btype="notify">🔔 Notify</button>
+                                <button class="btn btn-sm btn-secondary" data-btype="alert">⚠️ Alert</button>
+                            </div>
+                            <textarea id="broadcast-message" rows="3" placeholder="Type your message to the realm..." style="width: 100%; margin-bottom: 12px;"></textarea>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span id="broadcast-hint" style="font-size: 11px; color: var(--text-dim);">Yellow server-wide text</span>
+                                <button id="btn-broadcast" class="btn btn-primary">Send to Realm</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- XP Rate Control -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span class="title-icon">⭐</span>
+                            <span class="title-text">Experience Rates</span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="xp-display">
+                                <span class="xp-value" id="xp-value">1x</span>
+                                <span class="xp-desc" id="xp-desc">Original experience</span>
+                            </div>
+                            <input type="range" id="xp-slider" min="1" max="50" value="1">
+                            <div class="xp-presets">
+                                <button class="btn btn-sm btn-active" data-xp="1">Blizzlike (1x)</button>
+                                <button class="btn btn-sm btn-secondary" data-xp="3">Casual (3x)</button>
+                                <button class="btn btn-sm btn-secondary" data-xp="5">Accelerated (5x)</button>
+                                <button class="btn btn-sm btn-secondary" data-xp="10">Rush (10x)</button>
+                                <button class="btn btn-sm btn-secondary" data-xp="50">Instant (50x)</button>
+                            </div>
+                            <div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 11px; color: var(--text-dim);">Applies to all players on next kill</span>
+                                <button id="btn-apply-xp" class="btn btn-primary">Apply Rate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holiday Events -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <span class="title-icon">🎪</span>
+                        <span class="title-text">World Events & Holidays</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="holiday-grid" id="holiday-grid">
+                            <div style="text-align: center; color: var(--text-dim); padding: 20px;">Loading game events...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOAP Console -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <span class="title-icon">⌨️</span>
+                        <span class="title-text">Command Console</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="console-output" id="console-output">
+                            <div style="color: var(--text-dim);">Type a SOAP command below and press Enter or click Execute.</div>
+                        </div>
+                        <div class="console-input-row">
+                            <input type="text" id="console-input" placeholder=".server info">
+                            <button id="btn-console-send" class="btn btn-primary">Execute</button>
+                        </div>
+                        <div class="quick-commands">
+                            <button class="quick-cmd" data-cmd=".server info">.server info</button>
+                            <button class="quick-cmd" data-cmd=".account onlinelist">.account onlinelist</button>
+                            <button class="quick-cmd" data-cmd=".reload all">.reload all</button>
+                            <button class="quick-cmd" data-cmd=".server shutdown 60">.server shutdown 60</button>
+                            <button class="quick-cmd" data-cmd=".server shutdown cancel">.shutdown cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Items (existing, reskinned) ───────── -->
+            <div id="page-items" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Item Browser</h2>
+                        <div class="page-desc">Search and inspect item templates</div>
+                    </div>
+                    <div class="header-actions">
+                        <input type="text" id="item-search" class="search-input" placeholder="Search items by name or entry ID...">
+                        <button id="search-items-btn" class="btn btn-primary">Search</button>
+                    </div>
+                </header>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Entry</th><th>Name</th><th>Quality</th><th>iLevel</th><th>Req Level</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="items-table-body">
+                            <tr><td colspan="6" class="loading">Loading items...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button id="items-prev" class="btn btn-secondary">← Previous</button>
+                    <span id="items-page-info">Page 1 of 1</span>
+                    <button id="items-next" class="btn btn-secondary">Next →</button>
+                </div>
+            </div>
+
+            <!-- ─── Players (existing, reskinned) ─────── -->
+            <div id="page-players" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Players</h2>
+                        <div class="page-desc">Character roster and management</div>
+                    </div>
+                    <div class="header-actions">
+                        <label class="checkbox"><input type="checkbox" id="online-only"><span>Online Only</span></label>
+                        <button id="refresh-players-btn" class="btn btn-primary">🔄 Refresh</button>
+                    </div>
+                </header>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>GUID</th><th>Name</th><th>Race</th><th>Class</th><th>Level</th><th>Status</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="players-table-body">
+                            <tr><td colspan="7" class="loading">Loading players...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button id="players-prev" class="btn btn-secondary">← Previous</button>
+                    <span id="players-page-info">Page 1 of 1</span>
+                    <button id="players-next" class="btn btn-secondary">Next →</button>
+                </div>
+            </div>
+
+            <!-- ─── WoWHead Import (existing, reskinned) ── -->
+            <div id="page-wowhead" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>WoWHead Import</h2>
+                        <div class="page-desc">Fetch item data from WoWHead</div>
+                    </div>
+                </header>
+                <div class="import-section">
+                    <div class="import-form">
+                        <label for="wowhead-item-id">Item ID</label>
+                        <input type="number" id="wowhead-item-id" placeholder="e.g., 19019 (Thunderfury)">
+                        <button id="fetch-wowhead-btn" class="btn btn-primary">Fetch Item</button>
+                    </div>
+                    <div id="wowhead-result" class="result-container" style="display: none;">
+                        <h3 style="color: var(--gold); font-family: var(--font-display); margin-bottom: 12px;">Fetched Item</h3>
+                        <div id="wowhead-item-preview"></div>
+                        <button id="import-wowhead-btn" class="btn btn-success">Import to Database</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Boss Scripting / SmartAI (NEW) ──── -->
+            <div id="page-boss" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Boss Scripting (SmartAI)</h2>
+                        <div class="page-desc">Visual SmartAI event builder for creature combat behavior</div>
+                    </div>
+                </header>
+
+                <!-- Creature Search Panel -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <span class="title-icon">🔍</span>
+                        <span class="title-text">Select Creature</span>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                            <input type="text" id="boss-creature-search"
+                                   placeholder="Search by name or entry ID..."
+                                   style="flex: 1;">
+                            <button id="boss-search-btn" class="btn btn-primary">Search</button>
+                        </div>
+                        <div id="boss-search-results" style="display: none;">
+                            <div id="boss-results-list" class="creature-results-list"></div>
+                        </div>
+                        <div id="boss-selected-creature" style="display: none;">
+                            <div class="selected-creature-banner">
+                                <div>
+                                    <span class="creature-name" id="boss-creature-name"></span>
+                                    <span class="creature-id" id="boss-creature-entry">#0</span>
+                                </div>
+                                <button id="boss-change-creature" class="btn btn-sm btn-secondary">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scripts List + Editor (hidden until creature selected) -->
+                <div id="boss-scripts-section" style="display: none;">
+
+                    <!-- Scripts List Panel -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span class="title-icon">📜</span>
+                            <span class="title-text">Smart Scripts</span>
+                            <div style="margin-left: auto; display: flex; gap: 8px;">
+                                <button id="boss-export-sql" class="btn btn-sm btn-secondary">Export SQL</button>
+                                <button id="boss-reload-scripts" class="btn btn-sm btn-primary">Reload (SOAP)</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div id="boss-scripts-list" class="scripts-timeline">
+                                <div style="text-align: center; color: var(--text-dim); padding: 20px;">
+                                    No scripts found. Click "Add New Script" to create one.
+                                </div>
+                            </div>
+                            <button id="boss-add-script" class="btn btn-primary" style="margin-top: 12px; width: 100%;">
+                                + Add New Script
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Script Editor Panel (inline, hidden until Add/Edit) -->
+                    <div id="boss-script-editor" class="panel" style="display: none;">
+                        <div class="panel-title">
+                            <span class="title-icon">✏️</span>
+                            <span class="title-text" id="boss-editor-title">Add Script</span>
+                        </div>
+                        <div class="panel-body">
+                            <form id="boss-script-form">
+                                <input type="hidden" id="boss-form-mode" value="add">
+                                <input type="hidden" id="boss-form-edit-id" value="">
+
+                                <div class="script-form-grid">
+                                    <!-- Event Section -->
+                                    <div class="form-section">
+                                        <h4>Event (When)</h4>
+                                        <div class="form-group">
+                                            <label>Event Type</label>
+                                            <select id="boss-event-type" required>
+                                                <option value="">Select event...</option>
+                                                <option value="0">Update IC (Timed - In Combat)</option>
+                                                <option value="1">Update OOC (Timed - Out of Combat)</option>
+                                                <option value="2">Health Percentage</option>
+                                                <option value="4">Aggro</option>
+                                                <option value="5">Kill</option>
+                                                <option value="6">Death</option>
+                                                <option value="7">Evade</option>
+                                                <option value="8">Spell Hit</option>
+                                                <option value="9">Range</option>
+                                                <option value="11">Respawn</option>
+                                                <option value="25">Reset</option>
+                                                <option value="34">Movement Inform</option>
+                                            </select>
+                                        </div>
+                                        <div id="boss-event-params" class="param-fields"></div>
+                                        <div class="form-group" style="margin-top: 12px;">
+                                            <label>Event Chance (%)</label>
+                                            <input type="number" id="boss-event-chance" min="0" max="100" value="100">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Event Phase Mask</label>
+                                            <input type="number" id="boss-event-phase" min="0" value="0">
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Section -->
+                                    <div class="form-section">
+                                        <h4>Action (Do What)</h4>
+                                        <div class="form-group">
+                                            <label>Action Type</label>
+                                            <select id="boss-action-type" required>
+                                                <option value="">Select action...</option>
+                                                <option value="1">Talk (Say/Yell)</option>
+                                                <option value="11">Cast Spell</option>
+                                                <option value="12">Summon Creature</option>
+                                                <option value="17">Set Faction</option>
+                                                <option value="18">Morph to Entry</option>
+                                                <option value="20">Cast Self</option>
+                                                <option value="24">Evade</option>
+                                                <option value="33">Set Phase</option>
+                                                <option value="37">Set Data</option>
+                                                <option value="41">Flee</option>
+                                                <option value="44">Set HP Percent</option>
+                                                <option value="75">Close Gossip</option>
+                                            </select>
+                                        </div>
+                                        <div id="boss-action-params" class="param-fields"></div>
+                                    </div>
+
+                                    <!-- Target Section -->
+                                    <div class="form-section">
+                                        <h4>Target (Who)</h4>
+                                        <div class="form-group">
+                                            <label>Target Type</label>
+                                            <select id="boss-target-type">
+                                                <option value="0">None</option>
+                                                <option value="1">Self</option>
+                                                <option value="2">Victim (Current Target)</option>
+                                                <option value="5">Stored Target</option>
+                                                <option value="6">Action Invoker</option>
+                                                <option value="7">Position</option>
+                                                <option value="9">Random in Range</option>
+                                                <option value="15">Closest Creature</option>
+                                                <option value="17">Stored Position</option>
+                                                <option value="19">Closest Player</option>
+                                                <option value="24">Farthest Player</option>
+                                            </select>
+                                        </div>
+                                        <div id="boss-target-params" class="param-fields"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Comment -->
+                                <div class="form-group" style="margin-top: 16px;">
+                                    <label>Comment</label>
+                                    <textarea id="boss-comment" rows="2"
+                                              placeholder="e.g., Cast Fireball at 30% HP"></textarea>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div style="display: flex; gap: 10px; margin-top: 16px;">
+                                    <button type="submit" class="btn btn-success">Save Script</button>
+                                    <button type="button" id="boss-cancel-edit" class="btn btn-secondary">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Loot Table Builder (NEW) ──────────── -->
+            <div id="page-loot" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Loot Table Builder</h2>
+                        <div class="page-desc">Visual loot editor with drop simulation</div>
+                    </div>
+                </header>
+
+                <!-- Creature Search Panel -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <span class="title-icon">🔍</span>
+                        <span class="title-text">Select Creature</span>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                            <input type="text" id="loot-creature-search"
+                                   placeholder="Search by name or entry ID..."
+                                   style="flex: 1;">
+                            <button id="loot-search-btn" class="btn btn-primary">Search</button>
+                        </div>
+                        <div id="loot-search-results" style="display: none;">
+                            <div id="loot-results-list" class="creature-results-list"></div>
+                        </div>
+                        <div id="loot-selected-creature" style="display: none;">
+                            <div class="selected-creature-banner">
+                                <div>
+                                    <span class="creature-name" id="loot-creature-name"></span>
+                                    <span class="creature-id" id="loot-creature-entry">#0</span>
+                                    <span class="loot-id-badge" id="loot-lootid-badge">Loot ID: 0</span>
+                                </div>
+                                <button id="loot-change-creature" class="btn btn-sm btn-secondary">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loot Table Section (hidden until creature selected) -->
+                <div id="loot-table-section" style="display: none;">
+
+                    <!-- No Loot Table Prompt -->
+                    <div id="loot-no-table" class="panel" style="display: none;">
+                        <div class="panel-body" style="text-align: center; padding: 40px;">
+                            <div style="font-size: 18px; color: var(--text-muted); margin-bottom: 16px;">
+                                This creature has no loot table.
+                            </div>
+                            <button id="loot-create-table" class="btn btn-primary">Create Loot Table</button>
+                        </div>
+                    </div>
+
+                    <!-- Loot Table Display -->
+                    <div id="loot-table-display" style="display: none;">
+                        <div class="panel">
+                            <div class="panel-title">
+                                <span class="title-icon">💎</span>
+                                <span class="title-text">Loot Table</span>
+                                <div style="margin-left: auto; display: flex; gap: 8px;">
+                                    <button id="loot-simulate-kill" class="btn btn-sm btn-primary">Simulate Kill</button>
+                                    <button id="loot-add-item" class="btn btn-sm btn-primary">+ Add Item</button>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div id="loot-cards-container" class="loot-cards-grid"></div>
+                            </div>
+                        </div>
+
+                        <!-- Simulation Results -->
+                        <div id="loot-simulation-results" class="panel" style="display: none;">
+                            <div class="panel-title">
+                                <span class="title-icon">🎁</span>
+                                <span class="title-text">Simulated Drops</span>
+                                <button id="loot-close-simulation" class="btn btn-sm btn-secondary" style="margin-left: auto;">Close</button>
+                            </div>
+                            <div class="panel-body">
+                                <div id="loot-simulation-drops"></div>
+                            </div>
+                        </div>
+
+                        <!-- Add/Edit Loot Entry Form -->
+                        <div id="loot-entry-editor" class="panel" style="display: none;">
+                            <div class="panel-title">
+                                <span class="title-icon">✏️</span>
+                                <span class="title-text" id="loot-editor-title">Add Loot Entry</span>
+                            </div>
+                            <div class="panel-body">
+                                <form id="loot-entry-form">
+                                    <input type="hidden" id="loot-form-mode" value="add">
+                                    <input type="hidden" id="loot-form-edit-item" value="">
+
+                                    <div class="loot-form-grid">
+                                        <!-- Item Search -->
+                                        <div class="form-section">
+                                            <h4>Item</h4>
+                                            <div class="form-group">
+                                                <label>Search Item</label>
+                                                <input type="text" id="loot-item-search" placeholder="Item name or ID...">
+                                            </div>
+                                            <div id="loot-item-results" class="item-search-results" style="display: none;"></div>
+                                            <div id="loot-selected-item" style="display: none;">
+                                                <div class="selected-item-card">
+                                                    <span id="loot-selected-item-name" class="quality-2"></span>
+                                                    <span id="loot-selected-item-id" style="color: var(--text-dim); font-size: 12px; margin-left: 8px;">#0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Drop Settings -->
+                                        <div class="form-section">
+                                            <h4>Drop Settings</h4>
+                                            <div class="form-group">
+                                                <label>Drop Chance (%)</label>
+                                                <input type="number" id="loot-chance" min="0" max="100" step="0.01" value="100">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Min Count</label>
+                                                <input type="number" id="loot-min-count" min="1" value="1">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Max Count</label>
+                                                <input type="number" id="loot-max-count" min="1" value="1">
+                                            </div>
+                                        </div>
+
+                                        <!-- Advanced -->
+                                        <div class="form-section">
+                                            <h4>Advanced</h4>
+                                            <div class="form-group">
+                                                <label>Group ID</label>
+                                                <input type="number" id="loot-group-id" min="0" value="0">
+                                                <span class="help-text">0 = independent, same ID = exclusive</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" id="loot-quest-required">
+                                                    <span>Quest Required</span>
+                                                </label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Loot Mode</label>
+                                                <input type="number" id="loot-mode" value="1">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Reference ID</label>
+                                                <input type="number" id="loot-reference" min="0" value="0">
+                                                <span class="help-text">0 = direct item, >0 = reference template</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                                        <button type="submit" class="btn btn-success">Save Entry</button>
+                                        <button type="button" id="loot-cancel-edit" class="btn btn-secondary">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Quest Builder (NEW) ──────────────── -->
+            <div id="page-quests" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Quest Builder</h2>
+                        <div class="page-desc">Create and edit quest templates with visual preview</div>
+                    </div>
+                    <button id="quest-create-new" class="btn btn-primary">+ Create New Quest</button>
+                </header>
+
+                <!-- Quest Search Panel -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <span class="title-icon">🔍</span>
+                        <span class="title-text">Search Quests</span>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                            <input type="text" id="quest-search-input"
+                                   placeholder="Search by quest name or ID..."
+                                   style="flex: 1;">
+                            <button id="quest-search-btn" class="btn btn-primary">Search</button>
+                        </div>
+                        <div id="quest-search-results" style="display: none;">
+                            <div id="quest-results-list" class="quest-results-list"></div>
+                        </div>
+                        <div id="quest-selected-banner" style="display: none;">
+                            <div class="selected-creature-banner">
+                                <div>
+                                    <span class="creature-name" id="quest-selected-name"></span>
+                                    <span class="creature-id" id="quest-selected-id">#0</span>
+                                    <span class="quest-type-badge" id="quest-type-badge">Normal</span>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button id="quest-export-sql" class="btn btn-sm btn-secondary">Export SQL</button>
+                                    <button id="quest-change-btn" class="btn btn-sm btn-secondary">Change</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quest Editor Section (hidden until quest selected) -->
+                <div id="quest-editor-section" style="display: none;">
+
+                    <!-- Two-column layout: Editor + Preview -->
+                    <div class="quest-layout">
+
+                        <!-- Left: Editor Form -->
+                        <div class="quest-editor-column">
+
+                            <!-- Basic Section -->
+                            <div class="panel">
+                                <div class="panel-title">
+                                    <span class="title-icon">📋</span>
+                                    <span class="title-text">Basic Information</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="quest-form-row">
+                                        <div class="form-group">
+                                            <label>Quest Title</label>
+                                            <input type="text" id="quest-log-title" placeholder="Quest name">
+                                        </div>
+                                    </div>
+                                    <div class="quest-form-row quest-form-3col">
+                                        <div class="form-group">
+                                            <label>Quest Level</label>
+                                            <input type="number" id="quest-level" value="1" min="-1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Min Level</label>
+                                            <input type="number" id="quest-min-level" value="1" min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Max Level</label>
+                                            <input type="number" id="quest-max-level" value="0" min="0">
+                                            <span class="help-text">0 = no max</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Quest Type</label>
+                                        <select id="quest-type">
+                                            <option value="0">Normal</option>
+                                            <option value="1">Group</option>
+                                            <option value="81">Dungeon</option>
+                                            <option value="82">Raid</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text Section -->
+                            <div class="panel">
+                                <div class="panel-title">
+                                    <span class="title-icon">📝</span>
+                                    <span class="title-text">Quest Text</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group" style="flex-direction: column; align-items: stretch;">
+                                        <label>Quest Description (shown in quest log)</label>
+                                        <textarea id="quest-description" rows="4" placeholder="The detailed story text the player reads..."></textarea>
+                                    </div>
+                                    <div class="form-group" style="flex-direction: column; align-items: stretch;">
+                                        <label>Objectives Summary (short text below title)</label>
+                                        <textarea id="quest-log-description" rows="2" placeholder="e.g., Kill 10 Defias Pillagers"></textarea>
+                                    </div>
+                                    <div class="form-group" style="flex-direction: column; align-items: stretch;">
+                                        <label>Completion Text (shown on turn-in)</label>
+                                        <textarea id="quest-completion-log" rows="3" placeholder="What the NPC says when you turn in..."></textarea>
+                                    </div>
+                                    <div class="form-group" style="flex-direction: column; align-items: stretch;">
+                                        <label>Area Description</label>
+                                        <input type="text" id="quest-area-description" placeholder="Optional area name">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Objectives Section -->
+                            <div class="panel">
+                                <div class="panel-title">
+                                    <span class="title-icon">🎯</span>
+                                    <span class="title-text">Objectives</span>
+                                </div>
+                                <div class="panel-body">
+                                    <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin-bottom: 10px; text-transform: uppercase;">Kill / Interact Objectives</h4>
+                                    <div class="objectives-grid">
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>NPC/GO #1</label><input type="number" id="quest-req-npc1" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-npc-count1" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-npc-name1"></span>
+                                        </div>
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>NPC/GO #2</label><input type="number" id="quest-req-npc2" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-npc-count2" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-npc-name2"></span>
+                                        </div>
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>NPC/GO #3</label><input type="number" id="quest-req-npc3" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-npc-count3" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-npc-name3"></span>
+                                        </div>
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>NPC/GO #4</label><input type="number" id="quest-req-npc4" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-npc-count4" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-npc-name4"></span>
+                                        </div>
+                                    </div>
+
+                                    <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin: 16px 0 10px; text-transform: uppercase;">Collect Item Objectives</h4>
+                                    <div class="objectives-grid">
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>Item #1</label><input type="number" id="quest-req-item1" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-item-count1" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-item-name1"></span>
+                                        </div>
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>Item #2</label><input type="number" id="quest-req-item2" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-item-count2" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-item-name2"></span>
+                                        </div>
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>Item #3</label><input type="number" id="quest-req-item3" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-item-count3" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-item-name3"></span>
+                                        </div>
+                                        <div class="objective-row">
+                                            <div class="form-group"><label>Item #4</label><input type="number" id="quest-req-item4" value="0" min="0"></div>
+                                            <div class="form-group"><label>Count</label><input type="number" id="quest-req-item-count4" value="0" min="0"></div>
+                                            <span class="objective-name" id="quest-req-item-name4"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rewards Section -->
+                            <div class="panel">
+                                <div class="panel-title">
+                                    <span class="title-icon">🏆</span>
+                                    <span class="title-text">Rewards</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="quest-form-row quest-form-2col">
+                                        <div class="form-group">
+                                            <label>XP Difficulty</label>
+                                            <input type="number" id="quest-reward-xp" value="0" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Reward Money (copper)</label>
+                                            <input type="number" id="quest-reward-money" value="0" min="0">
+                                            <span class="quest-money-display" id="quest-money-display"></span>
+                                        </div>
+                                    </div>
+
+                                    <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin: 12px 0 10px; text-transform: uppercase;">Guaranteed Rewards (always given)</h4>
+                                    <div class="rewards-grid">
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Item 1</label><input type="number" id="quest-reward-item1" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-reward-amount1" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-reward-item-name1"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Item 2</label><input type="number" id="quest-reward-item2" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-reward-amount2" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-reward-item-name2"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Item 3</label><input type="number" id="quest-reward-item3" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-reward-amount3" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-reward-item-name3"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Item 4</label><input type="number" id="quest-reward-item4" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-reward-amount4" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-reward-item-name4"></span>
+                                        </div>
+                                    </div>
+
+                                    <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin: 16px 0 10px; text-transform: uppercase;">Choice Rewards (player picks one)</h4>
+                                    <div class="rewards-grid">
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Choice 1</label><input type="number" id="quest-choice-item1" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-choice-qty1" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-choice-item-name1"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Choice 2</label><input type="number" id="quest-choice-item2" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-choice-qty2" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-choice-item-name2"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Choice 3</label><input type="number" id="quest-choice-item3" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-choice-qty3" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-choice-item-name3"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Choice 4</label><input type="number" id="quest-choice-item4" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-choice-qty4" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-choice-item-name4"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Choice 5</label><input type="number" id="quest-choice-item5" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-choice-qty5" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-choice-item-name5"></span>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Choice 6</label><input type="number" id="quest-choice-item6" value="0" min="0"></div>
+                                            <div class="form-group"><label>Qty</label><input type="number" id="quest-choice-qty6" value="0" min="0"></div>
+                                            <span class="reward-item-name" id="quest-choice-item-name6"></span>
+                                        </div>
+                                    </div>
+
+                                    <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin: 16px 0 10px; text-transform: uppercase;">Reputation Rewards</h4>
+                                    <div class="rewards-grid">
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Faction 1</label><input type="number" id="quest-rep-faction1" value="0" min="0"></div>
+                                            <div class="form-group"><label>Rep</label><input type="number" id="quest-rep-value1" value="0"></div>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Faction 2</label><input type="number" id="quest-rep-faction2" value="0" min="0"></div>
+                                            <div class="form-group"><label>Rep</label><input type="number" id="quest-rep-value2" value="0"></div>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Faction 3</label><input type="number" id="quest-rep-faction3" value="0" min="0"></div>
+                                            <div class="form-group"><label>Rep</label><input type="number" id="quest-rep-value3" value="0"></div>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Faction 4</label><input type="number" id="quest-rep-faction4" value="0" min="0"></div>
+                                            <div class="form-group"><label>Rep</label><input type="number" id="quest-rep-value4" value="0"></div>
+                                        </div>
+                                        <div class="reward-row">
+                                            <div class="form-group"><label>Faction 5</label><input type="number" id="quest-rep-faction5" value="0" min="0"></div>
+                                            <div class="form-group"><label>Rep</label><input type="number" id="quest-rep-value5" value="0"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chain Section -->
+                            <div class="panel">
+                                <div class="panel-title">
+                                    <span class="title-icon">🔗</span>
+                                    <span class="title-text">Quest Chain</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="quest-form-row quest-form-3col">
+                                        <div class="form-group">
+                                            <label>Previous Quest ID</label>
+                                            <input type="number" id="quest-prev-id" value="0" min="0">
+                                            <span class="chain-quest-name" id="quest-prev-name"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Next Quest ID</label>
+                                            <input type="number" id="quest-next-id" value="0" min="0">
+                                            <span class="chain-quest-name" id="quest-next-name"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Exclusive Group</label>
+                                            <input type="number" id="quest-exclusive-group" value="0">
+                                            <span class="help-text">Same value = only one active</span>
+                                        </div>
+                                    </div>
+                                    <div id="quest-chain-visual" class="quest-chain-visual" style="display: none;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Quest Givers / Enders -->
+                            <div class="panel">
+                                <div class="panel-title">
+                                    <span class="title-icon">👤</span>
+                                    <span class="title-text">Quest Givers &amp; Enders</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="quest-npc-grid">
+                                        <div>
+                                            <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin-bottom: 10px; text-transform: uppercase;">Quest Givers (Start)</h4>
+                                            <div id="quest-givers-list" class="npc-list">
+                                                <div style="color: var(--text-dim); font-size: 12px;">No quest givers assigned</div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                                <input type="text" id="quest-giver-search" placeholder="Search NPC..." style="flex: 1;">
+                                                <button id="quest-giver-search-btn" class="btn btn-sm btn-primary">Add</button>
+                                            </div>
+                                            <div id="quest-giver-results" class="npc-search-results" style="display: none;"></div>
+                                        </div>
+                                        <div>
+                                            <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin-bottom: 10px; text-transform: uppercase;">Quest Enders (Turn-in)</h4>
+                                            <div id="quest-enders-list" class="npc-list">
+                                                <div style="color: var(--text-dim); font-size: 12px;">No quest enders assigned</div>
+                                            </div>
+                                            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                                <input type="text" id="quest-ender-search" placeholder="Search NPC..." style="flex: 1;">
+                                                <button id="quest-ender-search-btn" class="btn btn-sm btn-primary">Add</button>
+                                            </div>
+                                            <div id="quest-ender-results" class="npc-search-results" style="display: none;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Save Button -->
+                            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                                <button id="quest-save-btn" class="btn btn-success" style="flex: 1; padding: 12px;">Save Quest</button>
+                            </div>
+                        </div>
+
+                        <!-- Right: WoW-Style Quest Preview -->
+                        <div class="quest-preview-column">
+                            <div class="panel quest-preview-panel" style="position: sticky; top: 0;">
+                                <div class="panel-title">
+                                    <span class="title-icon">📖</span>
+                                    <span class="title-text">Quest Preview</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="quest-preview">
+                                        <div class="quest-preview-header">
+                                            <div class="quest-preview-title" id="preview-title">Quest Title</div>
+                                            <div class="quest-preview-level" id="preview-level">Level 1</div>
+                                        </div>
+                                        <div class="quest-preview-divider"></div>
+                                        <div class="quest-preview-description" id="preview-description">
+                                            Quest description will appear here...
+                                        </div>
+                                        <div class="quest-preview-divider"></div>
+                                        <div class="quest-preview-section-title">Objectives</div>
+                                        <div class="quest-preview-objectives" id="preview-objectives">
+                                            <div class="quest-preview-obj-summary" id="preview-obj-summary"></div>
+                                            <ul id="preview-obj-list"></ul>
+                                        </div>
+                                        <div class="quest-preview-divider"></div>
+                                        <div class="quest-preview-section-title">Rewards</div>
+                                        <div class="quest-preview-rewards" id="preview-rewards">
+                                            <div id="preview-money" class="quest-preview-money" style="display: none;"></div>
+                                            <div id="preview-reward-items"></div>
+                                            <div id="preview-choice-items" style="display: none;">
+                                                <div class="quest-preview-choice-label">You will be able to choose one of these rewards:</div>
+                                                <div id="preview-choice-list"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── NPC Manager (NEW) ──────────────── -->
+            <div id="page-npcs" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>NPC Manager</h2>
+                        <div class="page-desc">Search, edit, and spawn creatures</div>
+                    </div>
+                </header>
+
+                <!-- NPC Search -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <span class="title-icon">🔍</span>
+                        <span class="title-text">Search Creatures</span>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+                            <input type="text" id="npc-search-input" placeholder="Search by name or entry ID..." style="flex: 2; min-width: 200px;">
+                            <input type="number" id="npc-min-level" placeholder="Min Lvl" style="width: 80px;" min="1">
+                            <input type="number" id="npc-max-level" placeholder="Max Lvl" style="width: 80px;" min="1">
+                            <button id="npc-search-btn" class="btn btn-primary">Search</button>
+                        </div>
+                        <div id="npc-search-results" style="display: none;">
+                            <div id="npc-results-list" class="npc-results-list"></div>
+                        </div>
+                        <div id="npc-selected-banner" style="display: none;">
+                            <div class="selected-creature-banner">
+                                <div>
+                                    <span class="creature-name" id="npc-selected-name"></span>
+                                    <span class="creature-id" id="npc-selected-id">#0</span>
+                                    <span class="npc-rank-badge" id="npc-rank-badge">Normal</span>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button id="npc-export-sql" class="btn btn-sm btn-secondary">Export SQL</button>
+                                    <button id="npc-change-btn" class="btn btn-sm btn-secondary">Change</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NPC Editor (hidden until selected) -->
+                <div id="npc-editor-section" style="display: none;">
+
+                    <!-- Identity -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">🏷️</span><span class="title-text">Identity</span></div>
+                        <div class="panel-body">
+                            <div class="npc-form-grid">
+                                <div class="form-group"><label>Name</label><input type="text" id="npc-name"></div>
+                                <div class="form-group"><label>Subname</label><input type="text" id="npc-subname" placeholder="e.g. Innkeeper"></div>
+                                <div class="form-group"><label>Model ID 1</label><input type="number" id="npc-modelid1" value="0"></div>
+                                <div class="form-group"><label>Model ID 2</label><input type="number" id="npc-modelid2" value="0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Combat -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">⚔️</span><span class="title-text">Combat</span></div>
+                        <div class="panel-body">
+                            <div class="npc-form-grid">
+                                <div class="form-group"><label>Min Level</label><input type="number" id="npc-minlevel" value="1" min="1"></div>
+                                <div class="form-group"><label>Max Level</label><input type="number" id="npc-maxlevel" value="1" min="1"></div>
+                                <div class="form-group">
+                                    <label>Rank</label>
+                                    <select id="npc-rank">
+                                        <option value="0">Normal</option>
+                                        <option value="1">Elite</option>
+                                        <option value="2">Rare Elite</option>
+                                        <option value="3">Boss</option>
+                                        <option value="4">Rare</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><label>Faction</label><input type="number" id="npc-faction" value="0"></div>
+                                <div class="form-group">
+                                    <label>Unit Class</label>
+                                    <select id="npc-unit-class">
+                                        <option value="1">Warrior</option>
+                                        <option value="2">Paladin</option>
+                                        <option value="4">Rogue</option>
+                                        <option value="8">Mage</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><label>Health Mod</label><input type="number" id="npc-health-mod" value="1" step="0.1" min="0"></div>
+                                <div class="form-group"><label>Mana Mod</label><input type="number" id="npc-mana-mod" value="1" step="0.1" min="0"></div>
+                                <div class="form-group"><label>Armor Mod</label><input type="number" id="npc-armor-mod" value="1" step="0.1" min="0"></div>
+                                <div class="form-group"><label>Damage Mod</label><input type="number" id="npc-damage-mod" value="1" step="0.1" min="0"></div>
+                                <div class="form-group"><label>XP Mod</label><input type="number" id="npc-xp-mod" value="1" step="0.1" min="0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Movement & Attack -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">🏃</span><span class="title-text">Movement &amp; Attack</span></div>
+                        <div class="panel-body">
+                            <div class="npc-form-grid">
+                                <div class="form-group"><label>Walk Speed</label><input type="number" id="npc-speed-walk" value="1" step="0.1" min="0"></div>
+                                <div class="form-group"><label>Run Speed</label><input type="number" id="npc-speed-run" value="1.14286" step="0.1" min="0"></div>
+                                <div class="form-group"><label>Base Attack Time</label><input type="number" id="npc-base-attack" value="2000" min="0"></div>
+                                <div class="form-group"><label>Range Attack Time</label><input type="number" id="npc-range-attack" value="2000" min="0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flags & Type -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">🏴</span><span class="title-text">Flags &amp; Type</span></div>
+                        <div class="panel-body">
+                            <div class="npc-form-grid">
+                                <div class="form-group"><label>NPC Flags</label><input type="number" id="npc-npcflag" value="0" min="0"></div>
+                                <div class="form-group"><label>Unit Flags</label><input type="number" id="npc-unit-flags" value="0" min="0"></div>
+                                <div class="form-group">
+                                    <label>Type</label>
+                                    <select id="npc-type">
+                                        <option value="0">None</option>
+                                        <option value="1">Beast</option>
+                                        <option value="2">Dragonkin</option>
+                                        <option value="3">Demon</option>
+                                        <option value="4">Elemental</option>
+                                        <option value="5">Giant</option>
+                                        <option value="6">Undead</option>
+                                        <option value="7">Humanoid</option>
+                                        <option value="8">Critter</option>
+                                        <option value="9">Mechanical</option>
+                                        <option value="10">Uncategorized</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><label>Type Flags</label><input type="number" id="npc-type-flags" value="0" min="0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economy & AI -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">💰</span><span class="title-text">Economy &amp; AI</span></div>
+                        <div class="panel-body">
+                            <div class="npc-form-grid">
+                                <div class="form-group"><label>Loot ID</label><input type="number" id="npc-lootid" value="0" min="0"></div>
+                                <div class="form-group"><label>Min Gold (copper)</label><input type="number" id="npc-mingold" value="0" min="0"></div>
+                                <div class="form-group"><label>Max Gold (copper)</label><input type="number" id="npc-maxgold" value="0" min="0"></div>
+                                <div class="form-group"><label>AI Name</label><input type="text" id="npc-ainame" placeholder="e.g. SmartAI"></div>
+                                <div class="form-group"><label>Script Name</label><input type="text" id="npc-scriptname"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save -->
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button id="npc-save-btn" class="btn btn-success" style="flex: 1; padding: 12px;">Save Creature</button>
+                    </div>
+
+                    <!-- Spawns -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">📍</span><span class="title-text">Spawn Points</span></div>
+                        <div class="panel-body">
+                            <div id="npc-spawns-table-wrap">
+                                <table class="data-table" id="npc-spawns-table">
+                                    <thead><tr><th>GUID</th><th>Map</th><th>X</th><th>Y</th><th>Z</th><th>Orient</th><th>Respawn</th><th></th></tr></thead>
+                                    <tbody id="npc-spawns-body"></tbody>
+                                </table>
+                            </div>
+                            <h4 style="color: var(--gold); font-family: var(--font-display); font-size: 12px; margin: 16px 0 10px; text-transform: uppercase;">Add Spawn</h4>
+                            <div class="npc-form-grid">
+                                <div class="form-group">
+                                    <label>Map</label>
+                                    <select id="npc-spawn-map">
+                                        <option value="0">Eastern Kingdoms</option>
+                                        <option value="1">Kalimdor</option>
+                                        <option value="530">Outland</option>
+                                        <option value="571">Northrend</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><label>X</label><input type="number" id="npc-spawn-x" value="0" step="0.1"></div>
+                                <div class="form-group"><label>Y</label><input type="number" id="npc-spawn-y" value="0" step="0.1"></div>
+                                <div class="form-group"><label>Z</label><input type="number" id="npc-spawn-z" value="0" step="0.1"></div>
+                                <div class="form-group"><label>Orientation</label><input type="number" id="npc-spawn-orient" value="0" step="0.1"></div>
+                                <div class="form-group"><label>Respawn (sec)</label><input type="number" id="npc-spawn-time" value="300" min="0"></div>
+                            </div>
+                            <button id="npc-add-spawn-btn" class="btn btn-primary" style="margin-top: 10px;">Add Spawn Point</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Item Editor (NEW) ──────────────── -->
+            <div id="page-item-editor" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Item Editor</h2>
+                        <div class="page-desc">Create, edit, and clone items with live tooltip preview</div>
+                    </div>
+                    <button id="item-ed-create-new" class="btn btn-primary">+ Create New Item</button>
+                </header>
+
+                <!-- Item Search -->
+                <div class="panel">
+                    <div class="panel-title"><span class="title-icon">🔍</span><span class="title-text">Search Items</span></div>
+                    <div class="panel-body">
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                            <input type="text" id="item-ed-search-input" placeholder="Search by item name or entry ID..." style="flex: 1;">
+                            <button id="item-ed-search-btn" class="btn btn-primary">Search</button>
+                        </div>
+                        <div id="item-ed-search-results" style="display: none;">
+                            <div id="item-ed-results-list" class="quest-results-list"></div>
+                        </div>
+                        <div id="item-ed-selected-banner" style="display: none;">
+                            <div class="selected-creature-banner">
+                                <div>
+                                    <span class="creature-name" id="item-ed-selected-name"></span>
+                                    <span class="creature-id" id="item-ed-selected-id">#0</span>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button id="item-ed-clone-btn" class="btn btn-sm btn-secondary">Clone</button>
+                                    <button id="item-ed-delete-btn" class="btn btn-sm btn-danger">Delete</button>
+                                    <button id="item-ed-change-btn" class="btn btn-sm btn-secondary">Change</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item Editor (hidden until selected) -->
+                <div id="item-ed-editor-section" style="display: none;">
+                    <div class="item-ed-layout">
+
+                        <!-- Left: Editor Form -->
+                        <div class="item-ed-editor-column">
+                            <!-- Identity -->
+                            <div class="panel">
+                                <div class="panel-title"><span class="title-icon">🏷️</span><span class="title-text">Identity</span></div>
+                                <div class="panel-body">
+                                    <div class="npc-form-grid">
+                                        <div class="form-group" style="grid-column: span 2;"><label>Name</label><input type="text" id="item-ed-name"></div>
+                                        <div class="form-group">
+                                            <label>Quality</label>
+                                            <select id="item-ed-quality">
+                                                <option value="0">0 - Poor (Grey)</option>
+                                                <option value="1">1 - Common (White)</option>
+                                                <option value="2">2 - Uncommon (Green)</option>
+                                                <option value="3">3 - Rare (Blue)</option>
+                                                <option value="4">4 - Epic (Purple)</option>
+                                                <option value="5">5 - Legendary (Orange)</option>
+                                                <option value="6">6 - Artifact (Gold)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group"><label>Item Level</label><input type="number" id="item-ed-itemlevel" value="1" min="1"></div>
+                                        <div class="form-group"><label>Required Level</label><input type="number" id="item-ed-reqlevel" value="0" min="0"></div>
+                                        <div class="form-group" style="grid-column: span 2;">
+                                            <label>Flavor Text</label>
+                                            <input type="text" id="item-ed-description" placeholder="Yellow italic text on tooltip">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Classification -->
+                            <div class="panel">
+                                <div class="panel-title"><span class="title-icon">📂</span><span class="title-text">Classification</span></div>
+                                <div class="panel-body">
+                                    <div class="npc-form-grid">
+                                        <div class="form-group"><label>Class</label><input type="number" id="item-ed-class" value="0" min="0"></div>
+                                        <div class="form-group"><label>Subclass</label><input type="number" id="item-ed-subclass" value="0" min="0"></div>
+                                        <div class="form-group"><label>Inventory Type</label><input type="number" id="item-ed-invtype" value="0" min="0"></div>
+                                        <div class="form-group">
+                                            <label>Bonding</label>
+                                            <select id="item-ed-bonding">
+                                                <option value="0">No Bind</option>
+                                                <option value="1">Binds on Pickup</option>
+                                                <option value="2">Binds on Equip</option>
+                                                <option value="3">Binds on Use</option>
+                                                <option value="4">Quest Item</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group"><label>Allowable Class</label><input type="number" id="item-ed-allowclass" value="-1"></div>
+                                        <div class="form-group"><label>Allowable Race</label><input type="number" id="item-ed-allowrace" value="-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="panel">
+                                <div class="panel-title"><span class="title-icon">📊</span><span class="title-text">Stats</span></div>
+                                <div class="panel-body">
+                                    <div id="item-ed-stats-grid" class="item-stats-grid"></div>
+                                </div>
+                            </div>
+
+                            <!-- Combat -->
+                            <div class="panel">
+                                <div class="panel-title"><span class="title-icon">⚔️</span><span class="title-text">Combat</span></div>
+                                <div class="panel-body">
+                                    <div class="npc-form-grid">
+                                        <div class="form-group"><label>Dmg Min</label><input type="number" id="item-ed-dmgmin" value="0" step="0.1"></div>
+                                        <div class="form-group"><label>Dmg Max</label><input type="number" id="item-ed-dmgmax" value="0" step="0.1"></div>
+                                        <div class="form-group"><label>Dmg Type</label><input type="number" id="item-ed-dmgtype" value="0" min="0"></div>
+                                        <div class="form-group"><label>Speed (ms)</label><input type="number" id="item-ed-delay" value="0" min="0"></div>
+                                        <div class="form-group"><label>Armor</label><input type="number" id="item-ed-armor" value="0" min="0"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resistances -->
+                            <div class="panel">
+                                <div class="panel-title"><span class="title-icon">🛡️</span><span class="title-text">Resistances</span></div>
+                                <div class="panel-body">
+                                    <div class="npc-form-grid">
+                                        <div class="form-group"><label>Holy</label><input type="number" id="item-ed-holy" value="0"></div>
+                                        <div class="form-group"><label>Fire</label><input type="number" id="item-ed-fire" value="0"></div>
+                                        <div class="form-group"><label>Nature</label><input type="number" id="item-ed-nature" value="0"></div>
+                                        <div class="form-group"><label>Frost</label><input type="number" id="item-ed-frost" value="0"></div>
+                                        <div class="form-group"><label>Shadow</label><input type="number" id="item-ed-shadow" value="0"></div>
+                                        <div class="form-group"><label>Arcane</label><input type="number" id="item-ed-arcane" value="0"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Economy -->
+                            <div class="panel">
+                                <div class="panel-title"><span class="title-icon">💰</span><span class="title-text">Economy &amp; Durability</span></div>
+                                <div class="panel-body">
+                                    <div class="npc-form-grid">
+                                        <div class="form-group"><label>Buy Price</label><input type="number" id="item-ed-buyprice" value="0" min="0"></div>
+                                        <div class="form-group"><label>Sell Price</label><input type="number" id="item-ed-sellprice" value="0" min="0"></div>
+                                        <div class="form-group"><label>Stackable</label><input type="number" id="item-ed-stackable" value="1" min="1"></div>
+                                        <div class="form-group"><label>Max Count</label><input type="number" id="item-ed-maxcount" value="0" min="0"></div>
+                                        <div class="form-group"><label>Max Durability</label><input type="number" id="item-ed-durability" value="0" min="0"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sockets -->
+                            <div class="panel">
+                                <div class="panel-title"><span class="title-icon">💎</span><span class="title-text">Sockets</span></div>
+                                <div class="panel-body">
+                                    <div class="npc-form-grid">
+                                        <div class="form-group"><label>Socket 1</label><input type="number" id="item-ed-socket1" value="0" min="0"></div>
+                                        <div class="form-group"><label>Socket 2</label><input type="number" id="item-ed-socket2" value="0" min="0"></div>
+                                        <div class="form-group"><label>Socket 3</label><input type="number" id="item-ed-socket3" value="0" min="0"></div>
+                                        <div class="form-group"><label>Socket Bonus</label><input type="number" id="item-ed-socketbonus" value="0" min="0"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                                <button id="item-ed-save-btn" class="btn btn-success" style="flex: 1; padding: 12px;">Save Item</button>
+                            </div>
+                        </div>
+
+                        <!-- Right: Live Tooltip Preview -->
+                        <div class="item-ed-preview-column">
+                            <div class="panel" style="position: sticky; top: 0;">
+                                <div class="panel-title"><span class="title-icon">📖</span><span class="title-text">Tooltip Preview</span></div>
+                                <div class="panel-body">
+                                    <div id="item-ed-tooltip-preview" class="item-tooltip-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Player Manager (NEW) ──────────────── -->
+            <div id="page-player-manager" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Player Manager</h2>
+                        <div class="page-desc">View player details and execute GM commands</div>
+                    </div>
+                </header>
+
+                <!-- Player Search -->
+                <div class="panel">
+                    <div class="panel-title"><span class="title-icon">🔍</span><span class="title-text">Search Players</span></div>
+                    <div class="panel-body">
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                            <input type="text" id="pm-search-input" placeholder="Search by player name or GUID..." style="flex: 1;">
+                            <button id="pm-search-btn" class="btn btn-primary">Search</button>
+                        </div>
+                        <div id="pm-search-results" style="display: none;">
+                            <div id="pm-results-list" class="quest-results-list"></div>
+                        </div>
+                        <div id="pm-selected-banner" style="display: none;">
+                            <div class="selected-creature-banner">
+                                <div>
+                                    <span class="creature-name" id="pm-selected-name"></span>
+                                    <span class="creature-id" id="pm-selected-id">#0</span>
+                                    <span id="pm-online-badge" class="pm-online-badge">Offline</span>
+                                </div>
+                                <button id="pm-change-btn" class="btn btn-sm btn-secondary">Change</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Detail (hidden until selected) -->
+                <div id="pm-detail-section" style="display: none;">
+                    <div class="pm-detail-grid">
+                        <!-- Info Panel -->
+                        <div class="panel">
+                            <div class="panel-title"><span class="title-icon">📋</span><span class="title-text">Character Info</span></div>
+                            <div class="panel-body">
+                                <div id="pm-info-content" class="pm-info-list"></div>
+                            </div>
+                        </div>
+                        <!-- Account Panel -->
+                        <div class="panel">
+                            <div class="panel-title"><span class="title-icon">🔑</span><span class="title-text">Account</span></div>
+                            <div class="panel-body">
+                                <div id="pm-account-content" class="pm-info-list"></div>
+                            </div>
+                        </div>
+                        <!-- Guild Panel -->
+                        <div class="panel">
+                            <div class="panel-title"><span class="title-icon">🏰</span><span class="title-text">Guild</span></div>
+                            <div class="panel-body">
+                                <div id="pm-guild-content"></div>
+                            </div>
+                        </div>
+                        <!-- Equipment Panel -->
+                        <div class="panel">
+                            <div class="panel-title"><span class="title-icon">🛡️</span><span class="title-text">Equipment</span></div>
+                            <div class="panel-body">
+                                <div id="pm-equipment-content" class="pm-equipment-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions Panel -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">⚡</span><span class="title-text">Actions</span></div>
+                        <div class="panel-body">
+                            <div class="pm-actions-grid">
+                                <div class="pm-action-group">
+                                    <h4>Teleport</h4>
+                                    <div style="display:flex; gap:8px;">
+                                        <select id="pm-tele-location" style="flex:1;">
+                                            <option value="mall">GM Island</option>
+                                            <option value="stormwind">Stormwind</option>
+                                            <option value="orgrimmar">Orgrimmar</option>
+                                            <option value="dalaran">Dalaran</option>
+                                            <option value="shattrath">Shattrath</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-primary" onclick="playerAction('teleport')">Go</button>
+                                    </div>
+                                </div>
+                                <div class="pm-action-group">
+                                    <h4>Grant Item</h4>
+                                    <div style="display:flex; gap:8px;">
+                                        <input type="number" id="pm-grant-item-id" placeholder="Item ID" style="flex:1;">
+                                        <input type="number" id="pm-grant-item-count" value="1" min="1" style="width:60px;">
+                                        <button class="btn btn-sm btn-primary" onclick="playerAction('grantitem')">Send</button>
+                                    </div>
+                                </div>
+                                <div class="pm-action-group">
+                                    <h4>Set Level</h4>
+                                    <div style="display:flex; gap:8px;">
+                                        <input type="number" id="pm-set-level" value="80" min="1" max="80" style="flex:1;">
+                                        <button class="btn btn-sm btn-primary" onclick="playerAction('setlevel')">Set</button>
+                                    </div>
+                                </div>
+                                <div class="pm-action-group">
+                                    <h4>Ban / Unban</h4>
+                                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                        <input type="text" id="pm-ban-duration" placeholder="Duration (e.g. 1d)" style="flex:1;">
+                                        <input type="text" id="pm-ban-reason" placeholder="Reason" style="flex:1;">
+                                        <button class="btn btn-sm btn-danger" onclick="playerAction('ban')">Ban</button>
+                                        <button class="btn btn-sm btn-secondary" onclick="playerAction('unban')">Unban</button>
+                                    </div>
+                                </div>
+                                <div class="pm-action-group">
+                                    <h4>Send Mail</h4>
+                                    <div style="display:flex; gap:8px; flex-direction:column;">
+                                        <input type="text" id="pm-mail-subject" placeholder="Subject">
+                                        <input type="text" id="pm-mail-body" placeholder="Message body">
+                                        <button class="btn btn-sm btn-primary" onclick="playerAction('sendmail')">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Economy Dashboard ──── -->
+            <div id="page-economy" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Economy Dashboard</h2>
+                        <div class="page-desc">Server gold overview, wealth distribution, and auction house stats</div>
+                    </div>
+                    <button class="btn btn-primary" id="eco-refresh-btn">Refresh</button>
+                </header>
+
+                <!-- Overview Cards -->
+                <div class="eco-cards">
+                    <div class="eco-card">
+                        <div class="eco-card-label">Total Gold in Economy</div>
+                        <div class="eco-card-value" id="eco-total-gold">—</div>
+                    </div>
+                    <div class="eco-card">
+                        <div class="eco-card-label">Average Gold Per Player</div>
+                        <div class="eco-card-value" id="eco-avg-gold">—</div>
+                    </div>
+                    <div class="eco-card">
+                        <div class="eco-card-label">Online Players' Gold</div>
+                        <div class="eco-card-value" id="eco-online-gold">—</div>
+                    </div>
+                    <div class="eco-card">
+                        <div class="eco-card-label">Active Auctions</div>
+                        <div class="eco-card-value" id="eco-ah-count">—</div>
+                    </div>
+                </div>
+
+                <div class="eco-layout">
+                    <!-- Richest Players -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">👑</span><span class="title-text">Richest Players</span></div>
+                        <div class="panel-body">
+                            <div id="eco-richest-list"></div>
+                        </div>
+                    </div>
+                    <!-- Gold Distribution -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">📊</span><span class="title-text">Gold by Level Range</span></div>
+                        <div class="panel-body">
+                            <div id="eco-distribution"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AH Stats -->
+                <div class="panel">
+                    <div class="panel-title"><span class="title-icon">🏪</span><span class="title-text">Auction House — Most Listed Items</span></div>
+                    <div class="panel-body">
+                        <div id="eco-ah-top-items"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Event Scheduler ──── -->
+            <div id="page-events" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Event Scheduler</h2>
+                        <div class="page-desc">Manage game events, holidays, and scheduled triggers</div>
+                    </div>
+                    <button class="btn btn-primary" id="evt-create-btn">Create Event</button>
+                </header>
+
+                <div class="panel">
+                    <div class="panel-title"><span class="title-icon">📅</span><span class="title-text">All Game Events</span></div>
+                    <div class="panel-body">
+                        <div style="display:flex; gap:10px; margin-bottom:12px;">
+                            <input type="text" id="evt-filter-input" placeholder="Filter events..." style="flex:1;">
+                        </div>
+                        <div class="data-table-wrapper">
+                            <table class="data-table" id="evt-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Description</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Occurence</th>
+                                        <th>Length</th>
+                                        <th>Holiday</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="evt-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Editor (shown when editing) -->
+                <div id="evt-editor" style="display:none;">
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">✏️</span><span class="title-text" id="evt-editor-title">Edit Event</span></div>
+                        <div class="panel-body">
+                            <div class="form-grid-2col">
+                                <div class="form-group">
+                                    <label>Event ID</label>
+                                    <input type="text" id="evt-id" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <input type="text" id="evt-description">
+                                </div>
+                                <div class="form-group">
+                                    <label>Start Time</label>
+                                    <input type="text" id="evt-start" placeholder="YYYY-MM-DD HH:MM:SS">
+                                </div>
+                                <div class="form-group">
+                                    <label>End Time</label>
+                                    <input type="text" id="evt-end" placeholder="YYYY-MM-DD HH:MM:SS">
+                                </div>
+                                <div class="form-group">
+                                    <label>Occurence (seconds)</label>
+                                    <input type="number" id="evt-occurence">
+                                </div>
+                                <div class="form-group">
+                                    <label>Length (seconds)</label>
+                                    <input type="number" id="evt-length">
+                                </div>
+                                <div class="form-group">
+                                    <label>Holiday ID</label>
+                                    <input type="number" id="evt-holiday" value="0">
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:10px; margin-top:16px;">
+                                <button class="btn btn-primary" id="evt-save-btn">Save</button>
+                                <button class="btn btn-secondary" id="evt-cancel-btn">Cancel</button>
+                                <button class="btn btn-danger" id="evt-delete-btn" style="margin-left:auto;">Delete Event</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Bot System ──── -->
+            <div id="page-bots" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Bot System</h2>
+                        <div class="page-desc">Manage PlayerBots, zone population, and bot commands</div>
+                    </div>
+                </header>
+
+                <!-- Bot Status -->
+                <div class="eco-cards">
+                    <div class="eco-card">
+                        <div class="eco-card-label">Bot Characters</div>
+                        <div class="eco-card-value" id="bot-count">—</div>
+                    </div>
+                    <div class="eco-card">
+                        <div class="eco-card-label">Module Status</div>
+                        <div class="eco-card-value" id="bot-module-status">—</div>
+                    </div>
+                </div>
+
+                <div class="bot-layout">
+                    <!-- Quick Commands -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">⚡</span><span class="title-text">Quick Commands</span></div>
+                        <div class="panel-body">
+                            <div class="bot-commands-grid">
+                                <button class="btn btn-primary" onclick="botQuickCommand('.playerbots add all')">Add All Bots</button>
+                                <button class="btn btn-primary" onclick="botQuickCommand('.playerbots remove all')">Remove All Bots</button>
+                                <button class="btn btn-secondary" onclick="botQuickCommand('.playerbots list')">List Active Bots</button>
+                                <button class="btn btn-secondary" onclick="botQuickCommand('.playerbots reload')">Reload Config</button>
+                            </div>
+                            <div style="margin-top:16px;">
+                                <h4 style="color:var(--gold); margin-bottom:8px;">Custom Command</h4>
+                                <div style="display:flex; gap:8px;">
+                                    <input type="text" id="bot-custom-cmd" placeholder=".playerbots ..." style="flex:1;">
+                                    <button class="btn btn-primary" id="bot-send-cmd-btn">Send</button>
+                                </div>
+                            </div>
+                            <div id="bot-cmd-result" class="bot-cmd-result" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Bot Configuration -->
+                    <div class="panel">
+                        <div class="panel-title"><span class="title-icon">⚙️</span><span class="title-text">Bot Configuration</span></div>
+                        <div class="panel-body">
+                            <div id="bot-config-content">
+                                <div style="color:var(--text-dim);">Loading configuration...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── DB2 Browser / Extractor / Setup Wizard ──── -->
+            <div id="page-extractor" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>DB2 Browser &amp; Extractor</h2>
+                        <div class="page-desc">Browse game data files, extract assets, run setup wizard</div>
+                    </div>
+                </header>
+
+                <!-- Sub-tab Navigation -->
+                <div class="ext-tabs">
+                    <button class="ext-tab active" data-ext-tab="db2">📋 DB2 Browser</button>
+                    <button class="ext-tab" data-ext-tab="spells">✨ Spell Viewer</button>
+                    <button class="ext-tab" data-ext-tab="wizard">🔧 Setup Wizard</button>
+                    <button class="ext-tab" data-ext-tab="assets">📦 Asset Extractor</button>
+                    <button class="ext-tab" data-ext-tab="ext-config">⚙️ Config</button>
+                </div>
+
+                <!-- ═══ Sub-tab: DB2 Browser ═══ -->
+                <div id="ext-panel-db2" class="ext-panel active">
+                    <div class="panel">
+                        <div class="panel-title">DB2 Files</div>
+                        <div class="panel-body">
+                            <div class="ext-db2-controls">
+                                <select id="db2-file-select" style="flex: 1;">
+                                    <option value="">-- Select a DB2 file --</option>
+                                </select>
+                                <button id="db2-load-btn" class="btn btn-primary">Load</button>
+                                <button id="db2-refresh-list-btn" class="btn btn-secondary">Refresh List</button>
+                            </div>
+                            <div id="db2-file-info" style="display:none; margin-top:12px;">
+                                <span id="db2-file-name" class="ext-badge"></span>
+                                <span id="db2-row-count" class="ext-badge ext-badge-dim"></span>
+                                <span id="db2-col-count" class="ext-badge ext-badge-dim"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search within loaded DB2 -->
+                    <div id="db2-search-panel" class="panel" style="display:none;">
+                        <div class="panel-title">Search</div>
+                        <div class="panel-body">
+                            <div class="ext-db2-controls">
+                                <select id="db2-search-column" style="width: 180px;">
+                                    <option value="">All Columns</option>
+                                </select>
+                                <input type="text" id="db2-search-input" placeholder="Search value..." style="flex: 1;">
+                                <button id="db2-search-btn" class="btn btn-primary">Search</button>
+                                <button id="db2-clear-search" class="btn btn-secondary">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DB2 Data Table -->
+                    <div id="db2-table-panel" class="panel" style="display:none;">
+                        <div class="panel-title">
+                            <span>Data</span>
+                            <div style="display:flex; gap:8px;">
+                                <button id="db2-export-json" class="btn btn-secondary btn-sm">Export JSON</button>
+                                <button id="db2-export-sql" class="btn btn-secondary btn-sm">Export SQL</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-container" style="max-height: 500px; overflow: auto;">
+                                <table id="db2-data-table" class="data-table">
+                                    <thead id="db2-table-head"></thead>
+                                    <tbody id="db2-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div class="ext-pagination">
+                                <button id="db2-prev-page" class="btn btn-secondary btn-sm">← Prev</button>
+                                <span id="db2-page-info">Page 1</span>
+                                <button id="db2-next-page" class="btn btn-secondary btn-sm">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ Sub-tab: Spell Viewer ═══ -->
+                <div id="ext-panel-spells" class="ext-panel">
+                    <div class="panel">
+                        <div class="panel-title">Combined Spell Viewer</div>
+                        <div class="panel-body">
+                            <p class="text-muted">Joins 8+ DB2 tables (SpellName, Spell, SpellEffect, SpellMisc, SpellPower, SpellCooldowns, SpellCastTimes, SpellRange) into a unified view.</p>
+                            <div class="ext-db2-controls" style="margin-top:12px;">
+                                <input type="text" id="spell-search-input" placeholder="Search by spell name or ID...">
+                                <button id="spell-search-btn" class="btn btn-primary">Search</button>
+                            </div>
+                            <div id="spell-search-results" style="display:none; margin-top: 12px;">
+                                <table class="data-table">
+                                    <thead><tr><th>ID</th><th>Name</th><th>Action</th></tr></thead>
+                                    <tbody id="spell-search-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spell Detail Panel -->
+                    <div id="spell-detail-panel" class="panel" style="display:none;">
+                        <div class="panel-title">Spell Detail</div>
+                        <div class="panel-body">
+                            <div class="spell-detail-grid">
+                                <div class="spell-detail-main">
+                                    <h3 id="spell-detail-name" class="spell-name"></h3>
+                                    <div id="spell-detail-id" class="text-muted"></div>
+                                    <div id="spell-detail-desc" class="spell-desc" style="margin-top:8px;"></div>
+                                    <div id="spell-detail-aura" class="spell-aura" style="margin-top:4px;"></div>
+
+                                    <div class="spell-stats-grid" style="margin-top: 16px;">
+                                        <div class="spell-stat">
+                                            <span class="spell-stat-label">Cast Time</span>
+                                            <span id="spell-detail-cast" class="spell-stat-value">—</span>
+                                        </div>
+                                        <div class="spell-stat">
+                                            <span class="spell-stat-label">Range</span>
+                                            <span id="spell-detail-range" class="spell-stat-value">—</span>
+                                        </div>
+                                        <div class="spell-stat">
+                                            <span class="spell-stat-label">Cost</span>
+                                            <span id="spell-detail-cost" class="spell-stat-value">—</span>
+                                        </div>
+                                        <div class="spell-stat">
+                                            <span class="spell-stat-label">Cooldown</span>
+                                            <span id="spell-detail-cd" class="spell-stat-value">—</span>
+                                        </div>
+                                        <div class="spell-stat">
+                                            <span class="spell-stat-label">Duration</span>
+                                            <span id="spell-detail-duration" class="spell-stat-value">—</span>
+                                        </div>
+                                        <div class="spell-stat">
+                                            <span class="spell-stat-label">Icon FDID</span>
+                                            <span id="spell-detail-icon" class="spell-stat-value">—</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Spell Effects -->
+                            <div style="margin-top: 16px;">
+                                <h4 style="color: var(--gold); margin-bottom: 8px;">Effects</h4>
+                                <div id="spell-effects-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ Sub-tab: Setup Wizard ═══ -->
+                <div id="ext-panel-wizard" class="ext-panel">
+                    <div class="panel">
+                        <div class="panel-title">Setup Wizard — TrinityCore Data Extraction</div>
+                        <div class="panel-body">
+                            <p class="text-muted">Runs TrinityCore's compiled extractor tools in order. These read the WoW client's CASC storage and produce maps, vmaps, and mmaps needed by the server.</p>
+
+                            <div class="wizard-steps">
+                                <div class="wizard-step" data-step="1">
+                                    <div class="wizard-step-header">
+                                        <span class="wizard-step-num">1</span>
+                                        <div>
+                                            <div class="wizard-step-name">Map &amp; DB2 Extraction</div>
+                                            <div class="text-muted">mapextractor.exe — Extracts terrain data + DB2 files from CASC (2-5 min)</div>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm wizard-run-btn" data-step="1">Run</button>
+                                    </div>
+                                    <div class="wizard-step-status" id="wizard-status-1">Not started</div>
+                                    <pre class="wizard-output" id="wizard-output-1"></pre>
+                                </div>
+
+                                <div class="wizard-step" data-step="2">
+                                    <div class="wizard-step-header">
+                                        <span class="wizard-step-num">2</span>
+                                        <div>
+                                            <div class="wizard-step-name">VMap Extraction</div>
+                                            <div class="text-muted">vmap4extractor.exe — Extracts visual map data from CASC (5-10 min)</div>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm wizard-run-btn" data-step="2">Run</button>
+                                    </div>
+                                    <div class="wizard-step-status" id="wizard-status-2">Not started</div>
+                                    <pre class="wizard-output" id="wizard-output-2"></pre>
+                                </div>
+
+                                <div class="wizard-step" data-step="3">
+                                    <div class="wizard-step-header">
+                                        <span class="wizard-step-num">3</span>
+                                        <div>
+                                            <div class="wizard-step-name">VMap Assembly</div>
+                                            <div class="text-muted">vmap4assembler.exe — Assembles visual maps (5-15 min)</div>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm wizard-run-btn" data-step="3">Run</button>
+                                    </div>
+                                    <div class="wizard-step-status" id="wizard-status-3">Not started</div>
+                                    <pre class="wizard-output" id="wizard-output-3"></pre>
+                                </div>
+
+                                <div class="wizard-step" data-step="4">
+                                    <div class="wizard-step-header">
+                                        <span class="wizard-step-num">4</span>
+                                        <div>
+                                            <div class="wizard-step-name">MMap Generation</div>
+                                            <div class="text-muted">mmaps_generator.exe — Generates navigation meshes (2-6 HOURS, CPU intensive)</div>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm wizard-run-btn" data-step="4">Run</button>
+                                    </div>
+                                    <div class="wizard-step-status" id="wizard-status-4">Not started</div>
+                                    <pre class="wizard-output" id="wizard-output-4"></pre>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 16px; display: flex; gap: 8px;">
+                                <button id="wizard-cancel-btn" class="btn btn-danger">Cancel Running Step</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ Sub-tab: Asset Extractor ═══ -->
+                <div id="ext-panel-assets" class="ext-panel">
+                    <div class="panel">
+                        <div class="panel-title">Asset Extractor (CASC)</div>
+                        <div class="panel-body">
+                            <p class="text-muted">Reads the retail WoW client's CASC storage and extracts icons, minimaps, and other assets for use in CompApp. Requires <code>@rhyster/wow-casc-dbc</code> and <code>sharp</code> npm packages.</p>
+
+                            <div style="margin-top: 16px;">
+                                <h4 style="color: var(--gold); margin-bottom: 8px;">CASC Status</h4>
+                                <div id="casc-status" class="text-muted">Not initialized</div>
+                            </div>
+
+                            <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button id="casc-init-btn" class="btn btn-primary">Initialize CASC</button>
+                                <button id="casc-extract-icons-btn" class="btn btn-secondary" disabled>Extract Icons</button>
+                                <button id="casc-cancel-btn" class="btn btn-danger" disabled>Cancel</button>
+                            </div>
+
+                            <div id="casc-progress" style="display:none; margin-top: 16px;">
+                                <div class="ext-progress-bar">
+                                    <div id="casc-progress-fill" class="ext-progress-fill"></div>
+                                </div>
+                                <div id="casc-progress-text" class="text-muted" style="margin-top: 4px;"></div>
+                            </div>
+
+                            <div id="casc-result" style="display:none; margin-top: 16px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ Sub-tab: Extractor Config ═══ -->
+                <div id="ext-panel-ext-config" class="ext-panel">
+                    <div class="panel">
+                        <div class="panel-title">Extractor Configuration</div>
+                        <div class="panel-body">
+                            <div class="form-grid-2col">
+                                <label>WoW Client Path</label>
+                                <input type="text" id="ext-client-path" placeholder="C:\Program Files\World of Warcraft\_retail_">
+
+                                <label>Output / Extracted Path</label>
+                                <input type="text" id="ext-output-path" placeholder="D:\Trinity Core\Tools\CompApp\extracted">
+
+                                <label>Extractor Bin Path</label>
+                                <input type="text" id="ext-bin-path" placeholder="D:\Trinity Core\build\bin\Release">
+
+                                <label>DB2 Source Path</label>
+                                <input type="text" id="ext-db2-path" placeholder="D:\server\data\dbc">
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <button id="ext-save-config-btn" class="btn btn-primary">Save Config</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Settings (existing + SOAP config) ──── -->
+            <div id="page-settings" class="page">
+                <header class="page-header">
+                    <div>
+                        <h2>Settings</h2>
+                        <div class="page-desc">Database and server configuration</div>
+                    </div>
+                    <button id="save-settings-btn" class="btn btn-success">💾 Save Settings</button>
+                </header>
+                <div class="settings-container">
+                    <section class="settings-section">
+                        <h3>Database Configuration</h3>
+                        <div class="form-group"><label>Host</label><input type="text" id="setting-db-host"></div>
+                        <div class="form-group"><label>Port</label><input type="number" id="setting-db-port"></div>
+                        <div class="form-group"><label>Username</label><input type="text" id="setting-db-user"></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="setting-db-password"></div>
+                        <h4>Database Names</h4>
+                        <div class="form-group"><label>Auth Database</label><input type="text" id="setting-db-auth"><button class="btn btn-sm btn-secondary test-btn" data-db="auth">Test</button></div>
+                        <div class="form-group"><label>Characters Database</label><input type="text" id="setting-db-characters"><button class="btn btn-sm btn-secondary test-btn" data-db="characters">Test</button></div>
+                        <div class="form-group"><label>World Database</label><input type="text" id="setting-db-world"><button class="btn btn-sm btn-secondary test-btn" data-db="world">Test</button></div>
+                        <div class="form-group"><label>Hotfixes Database</label><input type="text" id="setting-db-hotfixes"><button class="btn btn-sm btn-secondary test-btn" data-db="hotfixes">Test</button></div>
+                    </section>
+
+                    <!-- NEW: SOAP Configuration -->
+                    <section class="settings-section">
+                        <h3>SOAP Connection (Worldserver)</h3>
+                        <p class="help-text" style="margin-top: 0; margin-bottom: 15px;">
+                            Connect to your running worldserver for live commands (broadcast, reload, XP rates).
+                            The SOAP user must be a GM account with level 3+ in the auth database.
+                        </p>
+                        <div class="form-group">
+                            <label class="checkbox"><input type="checkbox" id="setting-soap-enabled"><span>Enable SOAP connection</span></label>
+                        </div>
+                        <div class="form-group"><label>SOAP Host</label><input type="text" id="setting-soap-host" placeholder="localhost or your server IP"></div>
+                        <div class="form-group"><label>SOAP Port</label><input type="number" id="setting-soap-port" placeholder="7878"></div>
+                        <div class="form-group"><label>SOAP Username</label><input type="text" id="setting-soap-user" placeholder="GM account username"></div>
+                        <div class="form-group"><label>SOAP Password</label><input type="password" id="setting-soap-password" placeholder="GM account password"></div>
+                        <div class="form-group"><label></label><button id="test-soap-btn" class="btn btn-secondary">🔌 Test SOAP Connection</button></div>
+                    </section>
+
+                    <section class="settings-section">
+                        <h3>Server Ports (Reference)</h3>
+                        <div class="form-group"><label>World Port</label><input type="number" id="setting-server-world-port" value="8085"></div>
+                        <div class="form-group"><label>Auth Port</label><input type="number" id="setting-server-auth-port" value="3724"></div>
+                        <p class="help-text">These are the game client connection ports, not SOAP. Listed here for reference.</p>
+                    </section>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

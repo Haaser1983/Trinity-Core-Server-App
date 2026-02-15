@@ -1,0 +1,1 @@
+See the full extractor tool prompt in the outputs download, or paste the content from EXTRACTOR_TOOL_PROMPT.md into your VSCode AI assistant.

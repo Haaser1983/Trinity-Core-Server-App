@@ -1,339 +1,145 @@
-# 🎮 TrinityCore Companion App
+# CompApp — TrinityCore Companion
 
-**WoWHead-Integrated Control Panel for TrinityCore Server Management**
+Standalone Electron desktop app for managing a TrinityCore 3.3.5a WoW private server. Direct MySQL access to all four databases, live SOAP commands, WoWHead integration, and a WoW-themed dark UI.
 
 ![Status](https://img.shields.io/badge/status-active%20development-yellow)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Mac%20%7C%20Linux-blue)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 20 LTS or higher
-- TrinityCore server with MySQL database
-- Internet connection (for WoWHead data)
-
-### Installation
+## Quick Start
 
 ```bash
-# Navigate to backend
-cd "D:\Trinity Core\Tools\CompApp\backend"
-
-# Install dependencies
+cd desktop
 npm install
-
-# Configure database (edit .env file)
-# DB_HOST=localhost
-# DB_PORT=3306
-# DB_USER=trinity
-# DB_PASS=trinity
-
-# Start development server
-npm run dev
+npm start          # production
+npm run dev        # with DevTools
 ```
 
-Server starts on: **http://localhost:3001**
+Configure your MySQL credentials and SOAP settings in the **Settings** page on first launch.
 
 ---
 
-## ✨ Features
+## Features
 
-### Current Features ✅
+### Core
 
-**WoWHead Integration**
-- 🔍 Search and fetch items from WoWHead
-- 📦 Get NPC data with loot tables
-- ✨ Fetch spell information
-- 💾 Automatic caching (24-hour TTL)
+| Page | Description |
+|------|-------------|
+| **Dashboard** | Server stats, online players, quick-action tiles |
+| **Control Panel** | SOAP console, XP rate slider, holiday event toggles, broadcasts |
+| **Settings** | Database credentials, SOAP config, server ports |
 
-**TrinityCore Database**
-- 📊 Query items from world database
-- 👥 View players and online status
-- 📈 Server metrics and statistics
-- 🔗 Direct MySQL access to all databases
+### Data Editors
 
-### Coming Soon 🚧
+| Page | Description |
+|------|-------------|
+| **NPC Manager** | Search/edit creature_template, manage spawns, SOAP reload |
+| **Item Editor** | Full item_template CRUD, clone, tooltip preview, all 100+ fields |
+| **Loot Table Builder** | Visual loot editor with drop simulation, group/reference loot |
+| **Boss Scripting** | SmartAI event builder — event/action/target with all params |
+| **Quest Builder** | Full quest editor with chain visualization, giver/ender assignment |
 
-**Code Generators**
-- Generate TrinityCore SQL from WoWHead items
-- Auto-create boss C++ scripts from strategy guides
-- Build loot tables from WoWHead data
-- Import modern WoW patches content
+### Server Management
 
-**Frontend UI**
-- React-based web interface
-- Item search and import
-- Boss script designer
-- Loot table editor
-- Player management dashboard
+| Page | Description |
+|------|-------------|
+| **Player Manager** | Player lookup, inventory, guild, account info, SOAP commands (teleport, ban, grant items, mail) |
+| **Economy Dashboard** | Total gold, richest players, gold distribution by level, auction house stats |
+| **Event Scheduler** | Full game_event CRUD, live start/stop via SOAP |
+| **Bot System** | PlayerBots module status, quick commands, custom SOAP |
 
----
+### Tools
 
-## 📖 API Documentation
-
-### WoWHead Endpoints
-
-```http
-GET /api/wowhead/items/:id
-GET /api/wowhead/items/search/:query
-GET /api/wowhead/npcs/:id
-GET /api/wowhead/spells/:id
-```
-
-**Example**: Fetch Thunderfury
-```bash
-curl http://localhost:3001/api/wowhead/items/19019
-```
-
-**Example**: Search for swords
-```bash
-curl http://localhost:3001/api/wowhead/items/search/sword
-```
-
-### Database Endpoints
-
-```http
-GET /api/items?page=1&limit=50
-GET /api/items/:id
-GET /api/players
-GET /api/players/online
-GET /api/players/:guid
-GET /api/server/status
-GET /api/server/metrics
-```
-
-**Example**: Get online players
-```bash
-curl http://localhost:3001/api/players/online
-```
+| Page | Description |
+|------|-------------|
+| **WoWHead Import** | Fetch item data by ID, import to database |
+| **DB2 Browser** | Browse .db2 files (WDC3/4/5), search, paginate, export JSON/SQL |
+| **Spell Viewer** | Combined spell view joining 8 DB2 tables |
+| **Setup Wizard** | Run TrinityCore extractors (mapextractor, vmap, mmaps) with progress |
+| **Asset Extractor** | CASC-based icon/texture extraction with BLP→PNG conversion |
 
 ---
 
-## 🛠️ Development
-
-### Project Structure
+## Architecture
 
 ```
-CompApp/
-├── backend/                 # Node.js + Express API
-│   ├── src/
-│   │   ├── services/       # WoWHead, Database services
-│   │   ├── routes/         # API endpoints
-│   │   ├── models/         # TypeScript types
-│   │   └── index.ts        # Main application
-│   ├── cache/              # WoWHead data cache
-│   ├── .env                # Configuration
-│   └── package.json
-│
-└── frontend/               # React UI (coming soon)
-    └── (To be created)
+desktop/
+├── src/
+│   ├── main.js              # Electron main process (IPC handlers, MySQL, SOAP)
+│   ├── preload.js           # Context bridge (86 IPC channels)
+│   ├── store.js             # JSON config persistence
+│   └── services/
+│       ├── soap.js          # SOAP XML-RPC client for worldserver
+│       ├── db2.js           # DB2/DBC file parser (WDC3/4/5)
+│       ├── casc.js          # CASC archive client for asset extraction
+│       └── blp.js           # BLP texture → PNG converter
+├── ui/
+│   ├── index.html           # Single-page app (16 pages, tabbed navigation)
+│   ├── app.js               # All renderer logic (~3600 lines)
+│   └── styles.css           # WoW-themed dark UI (~1950 lines)
+└── package.json
 ```
 
-### Backend Commands
+**Key design decisions:**
+- **No framework** — vanilla HTML/CSS/JS renderer for zero build step and fast iteration
+- **contextIsolation: true** — all Node.js access goes through explicit IPC channels in preload.js
+- **4 MySQL pools** — auth, characters, world, hotfixes with auto-reconnect
+- **SOAP integration** — live server commands without restart
+- **Graceful degradation** — every DB query is wrapped in try/catch; missing tables don't crash the app
+
+---
+
+## Database Connections
+
+The app connects to four TrinityCore databases via MySQL2 connection pools:
+
+| Pool | Database | Used By |
+|------|----------|---------|
+| `auth` | Account data | Player Manager (account info, bans) |
+| `characters` | Character data | Players, Economy, Bots |
+| `world` | Game data | NPCs, Items, Quests, Loot, Scripts, Events |
+| `hotfixes` | Client patches | DB2 Browser (future) |
+
+---
+
+## SOAP Commands
+
+When SOAP is enabled and configured, these features use live server commands:
+
+- **Control Panel** — `.server info`, custom console commands, broadcasts
+- **NPC Manager** — `.reload creature_template` after edits
+- **Boss Scripting** — `reload smart_scripts`
+- **Player Manager** — `.tele`, `.additem`, `.setlevel`, `.ban`, `.unban`, `.send mail`
+- **Event Scheduler** — `.event start/stop`
+- **Bot System** — `.playerbots` commands
+
+---
+
+## Development
 
 ```bash
-npm run dev      # Development server (auto-reload)
-npm run build    # Compile TypeScript to JavaScript
-npm start        # Production server
-npm test         # Run tests
+npm run dev        # Launch with DevTools open
 ```
 
-### Adding the Frontend
+The app uses no build tools — edit `ui/app.js`, `ui/styles.css`, or `ui/index.html` and reload (`Ctrl+R`).
 
-```bash
-cd "D:\Trinity Core\Tools\CompApp"
-npm create vite@latest frontend -- --template react-ts
-cd frontend
-npm install
-npm run dev
-```
+### Adding a new IPC handler
 
----
+1. Add `ipcMain.handle('channel-name', ...)` in `src/main.js`
+2. Add the bridge method in `src/preload.js`
+3. Call `window.api.namespace.method()` from `ui/app.js`
 
-## 🎯 Use Cases
+### Optional dependencies (not in package.json yet)
 
-### 1. Import Modern WoW Items
-
-```typescript
-// Search for Dragonflight items
-const items = await wowhead.searchItems('dragonflight epic');
-
-// Generate SQL for each item
-items.forEach(async (item) => {
-  const sql = await generator.generateItemSQL(item);
-  await database.execute(sql);
-});
-```
-
-### 2. Create Custom Boss
-
-```typescript
-// Fetch Lich King data
-const lichKing = await wowhead.getNPC(36597);
-const mechanics = await wowhead.getBossMechanics('Lich King');
-
-// Generate C++ script
-const script = await generator.generateBossScript(lichKing, mechanics);
-
-// Save to TrinityCore/src/server/scripts/
-fs.writeFileSync('boss_custom_lich_king.cpp', script);
-```
-
-### 3. Update Loot Tables
-
-```typescript
-// Get loot from WoWHead
-const boss = await wowhead.getNPC(36597);
-
-// Generate loot SQL
-const lootSQL = await generator.generateLootTable(boss);
-
-// Apply to database
-await database.execute(lootSQL);
-```
+| Package | Used By | Purpose |
+|---------|---------|---------|
+| `@rhyster/wow-casc-dbc` | DB2 Browser, CASC Extractor | Parse DB2 files, read CASC archives |
+| `sharp` | BLP Converter | Convert BLP textures to PNG |
 
 ---
 
-## 📊 Performance
+## License
 
-- **WoWHead Requests**: Cached for 24 hours
-- **Database Queries**: Connection pooling (10 connections per database)
-- **API Response Time**: <100ms (cached), <2s (fresh WoWHead fetch)
-
----
-
-## 🔒 Security
-
-**Current Status**: Development mode (no authentication)
-
-**Production Recommendations**:
-- Add JWT authentication
-- Implement rate limiting
-- Enable HTTPS
-- Use environment-specific configs
-- Add input validation
-- Implement RBAC (Role-Based Access Control)
-
----
-
-## 🐛 Troubleshooting
-
-### Backend won't start
-
-```bash
-# Check Node.js version
-node --version  # Should be v20+
-
-# Reinstall dependencies
-rm -rf node_modules package-lock.json
-npm install
-```
-
-### Database connection fails
-
-```bash
-# Test MySQL connection
-mysql -h localhost -u trinity -p
-
-# Check .env configuration
-cat .env | grep DB_
-```
-
-### WoWHead requests fail
-
-- Check internet connection
-- WoWHead may rate-limit (wait a few minutes)
-- Try using cached data
-- Check firewall settings
-
----
-
-## 📚 Documentation
-
-- [Backend README](./backend/README.md) - API details
-- [Analysis Reports](../TrinityCore_Analysis/) - Phase 1 analysis
-- [Modernization Guides](../TrinityCore_Modernization/) - Implementation guides
-
----
-
-## 🗺️ Roadmap
-
-### Phase 1: Foundation ✅
-- [x] Backend API setup
-- [x] WoWHead integration
-- [x] Database access
-- [x] Basic caching
-
-### Phase 2: Code Generation (In Progress)
-- [ ] Item SQL generator
-- [ ] Boss script generator
-- [ ] Loot table generator
-- [ ] Batch import tools
-
-### Phase 3: Frontend UI
-- [ ] React application setup
-- [ ] Item search interface
-- [ ] Boss designer UI
-- [ ] Loot table editor
-- [ ] Player management
-
-### Phase 4: Advanced Features
-- [ ] Quest editor
-- [ ] World event scheduler
-- [ ] Server monitoring dashboard
-- [ ] Backup/restore tools
-- [ ] Log viewer
-
----
-
-## 🤝 Contributing
-
-This is a work in progress! Contributions welcome:
-
-1. Fork the project
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
----
-
-## 📝 License
-
-MIT License - See LICENSE file for details
-
----
-
-## 🙏 Acknowledgments
-
-- **TrinityCore Team** - For the amazing emulator
-- **WoWHead** - For the comprehensive database
-- **Community** - For testing and feedback
-
----
-
-## 📞 Support
-
-- **Issues**: Create an issue in this repository
-- **TrinityCore Discord**: https://discord.gg/trinitycore
-- **Documentation**: Check the /docs folder
-
----
-
-**Status**: 🚧 Active Development  
-**Version**: 1.0.0-alpha  
-**Last Updated**: February 6, 2026
-
----
-
-## 🎉 Ready to Code!
-
-Open this folder in VSCode and start developing:
-
-```bash
-code "D:\Trinity Core\Tools\CompApp"
-```
-
-Your companion app is ready to evolve! 🚀
+MIT
